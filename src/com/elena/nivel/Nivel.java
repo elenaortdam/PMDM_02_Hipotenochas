@@ -2,6 +2,7 @@ package com.elena.nivel;
 
 import com.elena.Casilla;
 import com.elena.Tablero;
+import com.elena.Valores;
 
 import java.util.Random;
 
@@ -20,9 +21,8 @@ public abstract class Nivel {
 
 	abstract public int getHipotenochasOcultas();
 
-	//TODO: elena hacer el resto de niveles
-	//todo: elena ¿quitar el asignar las hipotenochas al principio?
 	public Tablero crearTablero(String nombreNivel) {
+		nombreNivel = nombreNivel.toUpperCase();
 		Nivel nivel = crearNivel(nombreNivel);
 		Casilla[][] casillas = new Casilla[nivel.getColumnas()][nivel.getFilas()];
 		int hipotenochasTotales = 0;
@@ -42,13 +42,12 @@ public abstract class Nivel {
 					casillas[i][j] = new Casilla(false);
 				}
 
-
 			}
 		}
 		Tablero tablero = new Tablero(casillas);
 
 		while (hipotenochasTotales < nivel.getHipotenochasOcultas()) {
-			asignarHipotenochas(tablero, getRandomNumber(0, nivel.getFilas() - 1),
+			asignarHipotenochas(tablero.getCasillas(), getRandomNumber(0, nivel.getFilas() - 1),
 								getRandomNumber(0, nivel.getColumnas() - 1));
 			hipotenochasTotales++;
 		}
@@ -61,17 +60,15 @@ public abstract class Nivel {
 		Nivel nivel = null;
 
 		switch (nombreNivel) {
-			case "Facil":
+			case Valores.NivelFacil.NOMBRE:
 				nivel = new NivelFacil();
 				break;
-			case "Intermedio":
-				//todo: elena: hacer nivel intermedio
+			case Valores.NivelMedio.NOMBRE:
+				nivel = new NivelIntermedio();
 				break;
-			case "Avanzado":
-				//todo: elena: hacer nivel avanzado
+			case Valores.NivelAvanzado.NOMBRE:
+				nivel = new NivelAvanzado();
 				break;
-			default:
-				nivel = new NivelFacil();
 		}
 		if (nivel == null) {
 			throw new IllegalArgumentException("Ha ocurrido un error al detectar el nivel");
@@ -80,12 +77,12 @@ public abstract class Nivel {
 		return nivel;
 	}
 
-	public void contarHipotenochasAlrededor(Tablero tablero, int celdaX, int celdaY) {
+	public static void contarHipotenochasAlrededor(Casilla[][]casillas, int celdaX, int celdaY) {
 		int totalHipotenochas = 0;
 		for (int i = celdaX - 1; i <= celdaX + 1; i++) {
 			for (int j = celdaY - 1; j <= celdaY + 1; j++) {
 				try {
-					if (tablero.getCasillas()[i][j].isTieneHipotenocha()) {
+					if (casillas[i][j].isTieneHipotenocha()) {
 						totalHipotenochas++;
 					}
 				} catch (ArrayIndexOutOfBoundsException ignored) {
@@ -93,7 +90,7 @@ public abstract class Nivel {
 
 			}
 		}
-		tablero.getCasillas()[celdaX][celdaY].setHipotenochasAlrededor(totalHipotenochas);
+		casillas[celdaX][celdaY].setHipotenochasAlrededor(totalHipotenochas);
 	}
 
 	//TODO: elena
@@ -101,26 +98,14 @@ public abstract class Nivel {
 
 	}
 
-	public int test(Casilla[][] casillas) {
-		int counter = 0;
-		for (int i = 0; i < casillas.length; i++) {
-			for (int j = 0; j < casillas[i].length; j++) {
-				if (casillas[i][j].isTieneHipotenocha()) {
-					counter++;
-				}
-			}
-		}
-		return counter;
-	}
-
-	private void asignarHipotenochas(Tablero tablero, int i, int j) {
-		if (!tablero.getCasillas()[i][j].isTieneHipotenocha()) {
-			tablero.getCasillas()[i][j].setTieneHipotenocha(true);
+	private void asignarHipotenochas(Casilla[][] casillas, int i, int j) {
+		if (!casillas[i][j].isTieneHipotenocha()) {
+			casillas[i][j].setTieneHipotenocha(true);
 		} else {
 			try {
-				asignarHipotenochas(tablero, i, j + 1);
+				asignarHipotenochas(casillas, i, j + 1);
 			} catch (ArrayIndexOutOfBoundsException ignored) {
-				asignarHipotenochas(tablero, i, 0);
+				asignarHipotenochas(casillas, i, 0);
 			}
 		}
 	}

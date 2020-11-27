@@ -7,9 +7,8 @@ public class Main {
 
 	public static void main(String[] args) {
 		Nivel nivel = new NivelFacil();
-		Tablero tablero = nivel.crearTablero("Facil");
-		nivel.contarHipotenochasAlrededor(tablero, 0, 0);
+		Tablero tablero = nivel.crearTablero(Valores.NivelFacil.NOMBRE);
+		Nivel.contarHipotenochasAlrededor(tablero.getCasillas(), 0, 0);
 		System.out.println(tablero.toString());
-		System.out.println(nivel.test(tablero.getCasillas()));
 	}
 }

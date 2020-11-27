@@ -5,10 +5,7 @@ public class Casilla {
 	private boolean tieneHipotenocha;
 	private int minasAlrededor;
 
-
-
 	public Casilla( boolean tieneHipotenocha) {
-
 		this.tieneHipotenocha = tieneHipotenocha;
 	}
 
